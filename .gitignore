@@ -1,0 +1,4 @@
+cmdock
+*.db
+*.log
+.DS_Store
