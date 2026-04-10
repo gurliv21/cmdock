@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 type Command struct {
@@ -22,7 +22,7 @@ func InitDB() (*sql.DB, error) {
 	}
 
 	path := home + "/.cmdock.db"
-	db, err := sql.Open("sqlite3", path)
+	db, err := sql.Open("sqlite", path)
 	if err != nil {
 		return nil, err
 	}
