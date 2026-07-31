@@ -41,7 +41,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         
         case "/":
             m.ShowSearch = true 
-            m.Search.Focus()  
+            m.Search.Focus()
+            return m,nil  
 
         case "q", "ctrl+c":
 

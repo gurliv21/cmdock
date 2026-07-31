@@ -20,8 +20,15 @@ func (m Model) body() string{
 	if !m.ShowDetails{
 		return m.topPanel(availH)
 	}
-	topH := availH / 2
-	bottomH := availH - topH
+
+	const maxBottomH =10
+
+	bottomH := availH / 2
+	if bottomH > maxBottomH {
+		bottomH = maxBottomH
+	}
+
+	topH := availH - bottomH
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
