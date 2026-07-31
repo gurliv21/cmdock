@@ -6,6 +6,9 @@ import(
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
     switch msg := msg.(type) {
+    case tea.WindowSizeMsg:
+        m.Width = msg.Width
+        m.Height = msg.Height    
 
     case tea.KeyMsg:
 
@@ -22,6 +25,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
             if m.Cursor < len(m.Commands)-1 {
                 m.Cursor++
             }
+        case "esc":
+            if m.ShowDetails{
+                m.ShowDetails = false
+            }
+            if m.ShowSearch{
+                m.ShowSearch = false
+                m.Search.SetValue("")
+                m.Search.Blur()
+                m.Commands = m.Commands
+                m.Cursor =0
+            }   
+        case "enter":
+            m.ShowDetails = true
+        
+        case "/":
+            m.ShowSearch = true 
+            m.Search.Focus()  
 
         case "q", "ctrl+c":
 
@@ -29,6 +49,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         }
 
     }
+    var cmd tea.Cmd
 
-    return m, nil
+    if m.ShowSearch{
+        m.Search, cmd = m.Search.Update(msg)
+        m.FilterCommands()
+    }
+    
+
+    return m, cmd
 }

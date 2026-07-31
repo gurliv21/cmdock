@@ -22,9 +22,15 @@ func Run() error{
 		return err
 	}
 
-	m := Model{
-		Commands:commands,
-	}
-	_,err = tea.NewProgram(m).Run()
+	// m := Model{
+	// 	Commands:commands,
+	// }
+
+	m :=NewModel()
+	m.Commands = commands
+	m.SearchCommands = commands
+
+	p := tea.NewProgram(m, tea.WithAltScreen())
+	_,err =p.Run()
 	return err
 }

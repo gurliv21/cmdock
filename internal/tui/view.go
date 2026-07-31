@@ -1,25 +1,29 @@
 package tui
 
 import (
-	"fmt"
+	// "fmt"
+    // "strings"
+    "github.com/charmbracelet/lipgloss"
 )
 
-func (m Model) View() string {
+func (m Model) View() string{
+    root :=rootStyle.
+    Width(m.contentWidth())
 
-    s := "Recent Commands\n\n"
+    return root.Render(
+        lipgloss.JoinVertical(
+        lipgloss.Left,
+        m.header(),
+        m.body(),
+        m.footer(),
+    ),
+    )
+}
 
-    for i, cmd := range m.Commands {
-
-        cursor := " "
-
-        if i == m.Cursor {
-            cursor = ">>"
-        }
-
-        s += fmt.Sprintf("%s %s\n", cursor, cmd.Command)
-    }
-
-    s += "\n\n↑ ↓ Move   q Quit"
-
-    return s
+func (m Model) contentWidth() int {
+	w := m.Width - rootStyle.GetHorizontalFrameSize()
+	if w < 1 {
+		w = 1
+	}
+	return w
 }

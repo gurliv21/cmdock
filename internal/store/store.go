@@ -61,7 +61,7 @@ func ShowCommands(db *sql.DB) ([]Command, error) {
 	SELECT command, directory, exit_code, start_time, end_time
 	FROM commands
 	ORDER BY start_time DESC
-	LIMIT 500`
+	LIMIT 10000`
 
 	rows, err := db.Query(query)
 	if err != nil {
