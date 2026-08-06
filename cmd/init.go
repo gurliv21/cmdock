@@ -3,8 +3,7 @@ package cmd
 import (
 	"cmdock/internal/shell"
 	"fmt"
-	"os"
-	"strings"
+	"cmdock/internal/ui"
 
 	"github.com/spf13/cobra"
 )
@@ -15,54 +14,40 @@ var initCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string){
 		err :=initShell()
 		if err != nil{
-			fmt.Println("Error occurred",err)
+			ui.Error("Error occurred While Init cmdock")
 			return
 		}
-		fmt.Println("Init completed. Run: source ~/.zshrc")
+		ui.Success("Init completed.... ")
 	},
 }
 
 func initShell() error{
-		home, err := os.UserHomeDir() // /home/yourName
-		if err !=nil{
-			return err
-		}
-
-		zshPath := home+ "/.zshrc"
-
-		exists,_:=fileContains(zshPath,"cmdock start")
-		if exists {
-			fmt.Println("cmdock hook already installed, skipping")
-			return nil
-	    }
-		file,err := os.OpenFile(zshPath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
-		if err !=nil{
-			return err
-		}
-
-		defer file.Close()
-
-		script := shell.ZshScript()
-		_,err = file.WriteString(script)
-
-		if err !=nil{
-			return err
-		}
-
-		return nil
-
-
-}
-
-func fileContains(path, text string)(bool,error){
-	data, err := os.ReadFile(path)
-	if err !=nil{
-		return false,err
+	info,err :=shell.Detect()
+	if err!=nil{
+		return err
 	}
-	return strings.Contains(string(data),text), nil
+	ui.Success(fmt.Sprintf("Running in %s", info.Type))
+
+	switch info.Type{
+	case shell.Zsh:
+		return shell.InstallZsh()
+	case shell.Bash:
+		return shell.InstallBash()
+	case shell.PowerShell:
+		return shell.InstallPowerShell()
+	case shell.Fish:
+		return shell.Fish()		
+	default:
+		 ui.Error("unsupported shell: %s ")	
+		 return nil	
+	}
+
+	return nil
+
+
 }
 
-func init(){
+func init(){ 
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(logCmd)
 	rootCmd.AddCommand(recordCmd)

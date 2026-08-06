@@ -1,5 +1,58 @@
 package shell
 
+import(
+  "cmdock/internal/ui"
+  "os"
+  "strings"
+  "path/filepath"
+)
+func InstallZsh() error{
+
+		home, err := os.UserHomeDir() // /home/yourName
+		if err !=nil{
+			return err
+		}
+
+		// zshPath := home+ "/.zshrc"
+
+    zshPath := filepath.Join(home, ".zshrc")
+
+    if _, err := os.Stat(zshPath); os.IsNotExist(err) {
+		file, err := os.Create(zshPath)
+		if err != nil {
+			return err
+		}
+		file.Close()
+	}
+
+
+		exists,_:=fileContains(zshPath,"cmdock start")
+
+		if exists {
+			ui.Info("cmdock hook already installed, skipping")
+			return nil
+	  }
+
+		file,err := os.OpenFile(zshPath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+
+		if err !=nil{
+			return err
+		}
+
+		defer file.Close()
+
+		script := ZshScript()
+		_,err = file.WriteString(script)
+
+		if err !=nil{
+			return err
+		}
+
+    ui.Info("Restart your terminal or run: source ~/.zshrc")
+
+		return nil  
+}
+
 func ZshScript() string {
     return `
 # >>> cmdock start >>>
@@ -32,4 +85,12 @@ add-zsh-hook precmd __cmdock_precmd
 fi
 # <<< cmdock end <<<
 `
+}
+
+func fileContains(path, text string)(bool,error){
+	data, err := os.ReadFile(path)
+	if err !=nil{
+		return false,err
+	}
+	return strings.Contains(string(data),text), nil
 }

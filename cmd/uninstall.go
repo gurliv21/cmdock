@@ -10,7 +10,7 @@ import(
 )
 
 var uninstallCmd = &cobra.Command{
-	Use:"unistall",
+	Use:"uninstall",
 	Short:"Removes and Clean up cmdock from you device",
 	Run:func(cmd *cobra.Command, args []string){
 		err := uninstall()
