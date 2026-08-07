@@ -1,6 +1,7 @@
 package shell
 
 import (
+	"cmdock/internal/ui"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,8 +28,8 @@ func InstallBash() error {
 	if err != nil {
 		return err
 	}
-   
 	if strings.Contains(string(data), "# >>> cmdock start >>>") {
+		ui.Info("cmdock hook already installed, skipping")
 		return nil
 	}
 
@@ -39,7 +40,13 @@ func InstallBash() error {
 	defer file.Close()
 
 	_, err = file.WriteString("\n" + bashScript() + "\n")
-	return err
+	if err != nil {
+		return err
+	}
+
+	ui.Info("Restart your terminal or run: source ~/.bashrc")
+
+	return nil
 }
 
 func bashScript() string {
@@ -47,6 +54,10 @@ func bashScript() string {
 # >>> cmdock start >>>
 
 __cmdock_preexec() {
+    case "$BASH_COMMAND" in
+        __cmdock_precmd|__cmdock_preexec) return ;;
+    esac
+
     export CMD_START_TIME=$(date +%s)
     export CMD_DIR=$(pwd)
     export CMD_COMMAND="$BASH_COMMAND"
@@ -56,7 +67,9 @@ __cmdock_precmd() {
     local exit_code=$?
     local end_time=$(date +%s)
 
+    [[ -z "$CMD_COMMAND" ]] && return
     [[ "$CMD_COMMAND" == cmdock* ]] && return
+    [[ "$CMD_COMMAND" == __cmdock_* ]] && return
 
     command cmdock record \
         --cmd "$CMD_COMMAND" \
@@ -64,11 +77,13 @@ __cmdock_precmd() {
         --start "$CMD_START_TIME" \
         --end "$end_time" \
         --exit "$exit_code" >/dev/null 2>&1
+
+    unset CMD_COMMAND
 }
 
 trap '__cmdock_preexec' DEBUG
 PROMPT_COMMAND="__cmdock_precmd${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
 
-# <<< cmdock end <<<
+# <<< cmdock end <
 `
 }

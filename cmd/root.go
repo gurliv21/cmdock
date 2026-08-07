@@ -8,7 +8,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:"cmdock",
-	Version:"2.0.0",
+	Version:"1.0.0",
 	Short:"cmdock is a command logger tool",
 	Long:"cmdock is a command logger tool for tracking and managing command line history.",
 	Run: func(cmd *cobra.Command, args []string) {

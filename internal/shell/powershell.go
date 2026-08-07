@@ -54,18 +54,29 @@ func powerShellScript() string {
 	return "\n" +
 		"# >>> cmdock start >>>\n" +
 		"\n" +
-		"Register-EngineEvent PowerShell.OnIdle -Action {\n" +
+		"$global:__cmdockLastId = 0\n" +
+		"\n" +
+		"function global:prompt {\n" +
 		"    $history = Get-History -Count 1\n" +
 		"\n" +
-		"    if ($history -and $history.CommandLine -notmatch \"^cmdock\") {\n" +
+		"    if ($history -and $history.Id -ne $global:__cmdockLastId) {\n" +
+		"        $global:__cmdockLastId = $history.Id\n" +
 		"\n" +
-		"        cmdock record `\n" +
-		"--cmd \"$($history.CommandLine)\" `\n" +
-		"            --dir \"$PWD\" `\n" +
-		"--start \"$([DateTimeOffset]::Now.ToUnixTimeSeconds())\" `\n" +
-		"            --end \"$([DateTimeOffset]::Now.ToUnixTimeSeconds())\" `\n" +
-		"--exit \"$LASTEXITCODE\" *> $null\n" +
+		"        if ($history.CommandLine -notmatch \"^cmdock\") {\n" +
+		"            $exitCode = if ($?) { 0 } else { 1 }\n" +
+		"            $startTs = [DateTimeOffset]$history.StartExecutionTime | ForEach-Object { $_.ToUnixTimeSeconds() }\n" +
+		"            $endTs = [DateTimeOffset]$history.EndExecutionTime | ForEach-Object { $_.ToUnixTimeSeconds() }\n" +
+		"\n" +
+		"            cmdock record `\n" +
+		"                --cmd \"$($history.CommandLine)\" `\n" +
+		"                --dir \"$PWD\" `\n" +
+		"                --start \"$startTs\" `\n" +
+		"                --end \"$endTs\" `\n" +
+		"                --exit \"$exitCode\" *> $null\n" +
+		"        }\n" +
 		"    }\n" +
+		"\n" +
+		"    \"PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) \"\n" +
 		"}\n" +
 		"\n" +
 		"# <<< cmdock end <<<\n"
