@@ -51,23 +51,22 @@ func InstallPowerShell() error {
 }
 
 func powerShellScript() string {
-	return `
-# >>> cmdock start >>>
-
-Register-EngineEvent PowerShell.OnIdle -Action {
-    $history = Get-History -Count 1
-
-    if ($history -and $history.CommandLine -notmatch "^cmdock") {
-
-        cmdock record `
-            --cmd "$($history.CommandLine)" `
-            --dir "$PWD" `
-            --start "$([DateTimeOffset]::Now.ToUnixTimeSeconds())" `
-            --end "$([DateTimeOffset]::Now.ToUnixTimeSeconds())" `
-            --exit "$LASTEXITCODE" *> $null
-    }
-
-
-# <<< cmdock end <<<
-`
+	return "\n" +
+		"# >>> cmdock start >>>\n" +
+		"\n" +
+		"Register-EngineEvent PowerShell.OnIdle -Action {\n" +
+		"    $history = Get-History -Count 1\n" +
+		"\n" +
+		"    if ($history -and $history.CommandLine -notmatch \"^cmdock\") {\n" +
+		"\n" +
+		"        cmdock record `\n" +
+		"--cmd \"$($history.CommandLine)\" `\n" +
+		"            --dir \"$PWD\" `\n" +
+		"--start \"$([DateTimeOffset]::Now.ToUnixTimeSeconds())\" `\n" +
+		"            --end \"$([DateTimeOffset]::Now.ToUnixTimeSeconds())\" `\n" +
+		"--exit \"$LASTEXITCODE\" *> $null\n" +
+		"    }\n" +
+		"}\n" +
+		"\n" +
+		"# <<< cmdock end <<<\n"
 }
