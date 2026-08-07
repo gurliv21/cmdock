@@ -4,6 +4,7 @@ import(
 	"github.com/charmbracelet/lipgloss"
 	"time"
 	"fmt"
+	"strings"
 
 )
 
@@ -17,8 +18,10 @@ func (m Model) body() string{
 		availH = 0
 	}
 
+	w := m.contentWidth()
+
 	if !m.ShowDetails{
-		return m.topPanel(availH)
+		return m.topPanel(availH,w)
 	}
 
 	const maxBottomH =10
@@ -32,13 +35,13 @@ func (m Model) body() string{
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
-		m.topPanel(topH),
+		m.topPanel(topH,w),
 		m.bottomPanel(bottomH),
 	)
 }
 
 
-func (m Model) topPanel(h int) string{
+func (m Model) topPanel(h int, w int) string{
 	visible := max(1,h)
 	offset := 0
 	if len(m.Commands) > visible {
@@ -66,6 +69,11 @@ func (m Model) topPanel(h int) string{
 	if cmd.ExitCode !=0{
 		icon ="✗"
 	}
+
+	maxTextWidth := w - lipgloss.Width(icon) - 1
+		if maxTextWidth > 0 {
+			text = truncateText(text, maxTextWidth)
+		}
 
 	row := icon + " " + text
 
@@ -125,4 +133,27 @@ func (m Model) bottomPanel(h int) string {
 		Height(max(1, h-panelStyle.GetVerticalFrameSize())).
 		MaxHeight(h).
 		Render(content)
+}
+
+func truncateText(s string, maxWidth int) string {
+	s = collapseWhitespace(s)
+
+	if lipgloss.Width(s) <= maxWidth {
+		return s
+	}
+	if maxWidth <= 1 {
+		return "…"
+	}
+	runes := []rune(s)
+	for lipgloss.Width(string(runes)) > maxWidth-1 {
+		runes = runes[:len(runes)-1]
+	}
+	return string(runes) + "…"
+}
+
+func collapseWhitespace(s string) string {
+	s = strings.ReplaceAll(s, "\n", " ")
+	s = strings.ReplaceAll(s, "\r", " ")
+	s = strings.ReplaceAll(s, "\t", " ")
+	return strings.Join(strings.Fields(s), " ")
 }

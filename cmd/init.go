@@ -36,7 +36,7 @@ func initShell() error{
 	case shell.PowerShell:
 		return shell.InstallPowerShell()
 	case shell.Fish:
-		return shell.Fish()		
+		return shell.InstallFish()	
 	default:
 		 ui.Error("unsupported shell: %s ")	
 		 return nil	
