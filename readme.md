@@ -1,91 +1,92 @@
 # cmdock
 
-`cmdock` is a lightweight command history manager for the terminal. It automatically records every shell command you execute and provides an interactive terminal interface to browse, search, and inspect your history.
+`cmdock` is a lightweight command history manager for the terminal. It automatically records every shell command you execute and gives you an interactive TUI to browse, fuzzy-search, and inspect your history — including working directory, exit status, and timing for every command.
 
-The project is built in Go using Bubble Tea for the terminal UI and SQLite for persistent storage.
+Built in Go with [Bubble Tea](https://github.com/charmbracelet/bubbletea) for the interface and SQLite for persistent storage.
 
 ---
 
 ## Features
 
-* Automatic shell command recording
-* Interactive terminal user interface (TUI)
-* Real-time fuzzy search
-* Stores the working directory for each command
-* Records command exit status
-* Records execution start and end times
-* Persistent SQLite database
-* Fast keyboard-driven navigation
+- Automatic shell command recording (bash, zsh, fish, PowerShell)
+- Interactive terminal UI (TUI)
+- Real-time fuzzy search
+- Tracks working directory, exit code, and start/end time per command
+- Persistent local SQLite database
+- Fast, keyboard-driven navigation
+- Single static binary, no runtime dependencies
 
 ---
 
 ## Installation
 
-### Clone the repository
+### macOS / Linux
 
 ```bash
-git clone https://github.com/<username>/cmdock.git
+curl -fsSL https://raw.githubusercontent.com/gurliv21/cmdock/main/scripts/install.sh | sh
+```
+
+This detects your OS/architecture, downloads the latest release, installs the binary to `/usr/local/bin`, and offers to run shell setup for you.
+
+### Windows
+
+```powershell
+irm https://raw.githubusercontent.com/gurliv21/cmdock/main/scripts/install.ps1 | iex
+```
+
+Installs to `%LOCALAPPDATA%\cmdock` and adds it to your user `PATH` automatically.
+
+### Manual download
+
+Grab a prebuilt binary for your platform from the [Releases page](https://github.com/gurliv21/cmdock/releases), extract it, and move it somewhere on your `PATH`:
+
+```bash
+tar -xzf cmdock_<os>_<arch>.tar.gz
+sudo mv cmdock /usr/local/bin
+```
+
+### Build from source
+
+Requires Go 1.22+.
+
+```bash
+git clone https://github.com/gurliv21/cmdock.git
 cd cmdock
+go build -o cmdock .
 ```
 
-### Build
+or, if you have Go installed and just want the binary on your `PATH`:
 
 ```bash
-go build -o cmdock
-```
-
-or install with Go:
-
-```bash
-go install
+go install github.com/gurliv21/cmdock@latest
 ```
 
 ---
 
-## Shell Integration
+## Shell integration
 
-`cmdock` records commands by integrating with your shell. Add the provided shell hook to your shell configuration file.
-
-### Zsh
-
-Add the hook to your `~/.zshrc`.
-
-```sh
-# cmdock shell hook
-# (Add the provided hook here)
-```
-
-Reload your shell:
+`cmdock` needs a small shell hook to capture commands as you run them. If you installed via `install.sh`/`install.ps1`, you were already offered this step. Otherwise, run:
 
 ```bash
-source ~/.zshrc
+cmdock init
 ```
 
-### Bash
-
-Add the hook to your `~/.bashrc`.
-
-```sh
-# cmdock shell hook
-```
-
-Reload your shell:
+This detects your current shell (bash, zsh, fish, or PowerShell) and appends the required hook to the right config file automatically. Restart your terminal, or reload your shell:
 
 ```bash
-source ~/.bashrc
+source ~/.zshrc     # zsh
+source ~/.bashrc    # bash
 ```
 
 ---
 
-## Running
+## Usage
 
-Launch the interface with:
+Launch the interface:
 
 ```bash
 cmdock
 ```
-
----
 
 ## Keyboard Shortcuts
 
