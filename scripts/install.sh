@@ -20,7 +20,20 @@ info()    { printf "%s%s%s\n" "$CYAN" "$1" "$RESET"; }
 success() { printf "%s✓ %s%s\n" "$GREEN" "$1" "$RESET"; }
 error()   { printf "%s✗ %s%s\n" "$RED" "$1" "$RESET" >&2; }
 
-printf "\n%s%s cmdock installer %s\n\n" "$BOLD" "▸" "$RESET"
+printf "%s%s" "$CYAN" "$BOLD"
+cat << "EOF"
+
+  ██████╗███╗   ███╗██████╗  ██████╗  ██████╗██╗  ██╗
+ ██╔════╝████╗ ████║██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝
+ ██║     ██╔████╔██║██║  ██║██║   ██║██║     █████╔╝
+ ██║     ██║╚██╔╝██║██║  ██║██║   ██║██║     ██╔═██╗
+ ╚██████╗██║ ╚═╝ ██║██████╔╝╚██████╔╝╚██████╗██║  ██╗
+  ╚═════╝╚═╝     ╚═╝╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝
+
+EOF
+printf "%s" "$RESET"
+
+printf "%sYour terminal's memory.%s\n\n" "$DIM" "$RESET"
 
 #os detection
 OS="$(uname -s)"

@@ -3,6 +3,7 @@ package shell
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -12,12 +13,7 @@ func InstallPowerShell() error {
 		return err
 	}
 
-	profile := filepath.Join(
-		home,
-		"Documents",
-		"PowerShell",
-		"Microsoft.PowerShell_profile.ps1",
-	)
+	profile := powerShellProfilePath(home)
 
 	if err := os.MkdirAll(filepath.Dir(profile), 0755); err != nil {
 		return err
@@ -48,6 +44,14 @@ func InstallPowerShell() error {
 
 	_, err = file.WriteString("\n" + powerShellScript() + "\n")
 	return err
+}
+
+func powerShellProfilePath(home string) string {
+	if runtime.GOOS == "windows" {
+		return filepath.Join(home, "Documents", "PowerShell", "Microsoft.PowerShell_profile.ps1")
+	}
+	// macOS / Linux (PowerShell Core)
+	return filepath.Join(home, ".config", "powershell", "Microsoft.PowerShell_profile.ps1")
 }
 
 func powerShellScript() string {

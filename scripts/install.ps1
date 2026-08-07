@@ -11,7 +11,14 @@ function Write-Success { param($msg) Write-Host "✓ $msg" -ForegroundColor Gree
 function Write-ErrorMsg{ param($msg) Write-Host "✗ $msg" -ForegroundColor Red }
 
 Write-Host ""
-Write-Host "▸ cmdock installer" -ForegroundColor White
+Write-Host @"
+  ██████╗███╗   ███╗██████╗  ██████╗  ██████╗██╗  ██╗
+ ██╔════╝████╗ ████║██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝
+ ██║     ██╔████╔██║██║  ██║██║   ██║██║     █████╔╝
+ ██║     ██║╚██╔╝██║██║  ██║██║   ██║██║     ██╔═██╗
+ ╚██████╗██║ ╚═╝ ██║██████╔╝╚██████╔╝╚██████╗██║  ██╗
+  ╚═════╝╚═╝     ╚═╝╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝
+"@ -ForegroundColor Cyan
 Write-Host ""
 
 # --- detect architecture ---

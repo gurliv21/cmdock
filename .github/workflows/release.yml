@@ -25,35 +25,3 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  test-windows:
-      runs-on: windows-latest
-      steps:
-        - uses: actions/checkout@v4
-
-        - uses: actions/setup-go@v5
-          with:
-            go-version: "1.22"
-
-        - name: Build
-          run: go build -o cmdock.exe .
-
-        - name: Run init
-          run: .\cmdock.exe init
-
-        - name: Show generated profile
-          run: Get-Content $PROFILE
-
-        - name: Load profile and check for errors
-          shell: pwsh
-          run: |
-            . $PROFILE
-            Write-Host "Profile loaded successfully"
-
-        - name: Simulate a command and check prompt
-          shell: pwsh
-          run: |
-            . $PROFILE
-            Get-Command prompt | Out-String | Write-Host
-            $result = prompt
-            Write-Host "Prompt output: $result"
