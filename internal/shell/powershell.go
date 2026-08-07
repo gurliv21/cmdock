@@ -66,7 +66,7 @@ Register-EngineEvent PowerShell.OnIdle -Action {
             --end "$([DateTimeOffset]::Now.ToUnixTimeSeconds())" `
             --exit "$LASTEXITCODE" *> $null
     }
-}
+
 
 # <<< cmdock end <<<
 `
