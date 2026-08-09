@@ -4,7 +4,7 @@
 
 Built in Go with [Bubble Tea](https://github.com/charmbracelet/bubbletea) for the interface and SQLite for persistent storage.
 
-<img width="850" height="498" alt="Screenshot 2026-08-06 at 4 29 59 PM" src="https://github.com/user-attachments/assets/14b2bef1-1661-4d40-a12a-3faa18ddec6b" />
+![demo](demo.gif)
 
 ---
 
